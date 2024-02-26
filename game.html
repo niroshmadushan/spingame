@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width" />
+    <!-- Required library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <!-- Bootstrap theme -->
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>How to make a spinning wheel game in javascript</title>
+    <link rel="stylesheet" href="styles.css">
+    
+  </head>
+  <body>
+    <div class="topbar">
+      <img src="./icons8-pinwheel-48.png"/>
+      <p>www.happywomensday.com</p>
+    <button class="btnhome">Home</button>
+    <h3> About | Services | Contact</h3>
+    </div>
+    <cenetr>
+    <div class="container">
+      <p align="center">Wheel of fortune !</p>
+      <h3 align="center">Spin to win, Today is your lucky day.</h3>
+      <div class="row">
+        <div class="col-xs-12" align="center">
+          <div id="wheel">
+
+            <canvas id="canvas" class="whl" width="400" height="400"></canvas>
+          </div>
+        </div>
+      </div>
+      <!--  end row -->
+      <div class="row">
+        <div class="col-xs-6" align="center">
+          <button type="button" class="btn" id="spin" onclick="spin()">Spin Now!</button>
+        </div>
+        <div class="col-xs-6" align="center">
+          <button type="button" id="close" class="btn1" onclick="stop()">Stop Now!</button>
+        </div>
+        <div class="col-xs-6" align="center">
+          <button type="button" id="wait" class="btn3">Please Wait!</button>
+        </div>
+        <div class="col-xs-6" align="center">
+          <button type="button" id="rwd" class="btn4">Get the reward</button>
+        </div>
+      
+      </div>
+    </div>
+  </cenetr>
+    <!-- end container -->
+    <br>
+    <p id="final"></p>
+    <div class="bottombar"><p><span class="big-space"></span><span class="big-space">© 2024 happywomensday.com</span>
+      <span class="big-space">Footer navigation</span>
+      <span class="big-space"> Terms</span>
+        <span class="big-space">Privacy</span>
+          <span class="big-space"> Security</span>
+            <span class="big-space">Status</span>
+              <span class="big-space"> Docs</span>
+                <span class="big-space">Contact</span>
+                  <span class="big-space"> Manage cookies</span>
+      Do not share your personal information</p></div>
+    <script language="JavaScript">
+       
+        function create_spinner() {
+          color_data = ['#fedf30', '#fdb441', '#fd6930', '#eb5454', '#bf9dd3', '#29b8cd', "#00f2a6", "#f67", "#00f2a6"];
+          label_data = ['Divyesh', 'Roshni', 'Rency', 'Reem', 'Ditya', 'Feny', 'Greny', 'Ronil','test'];
+          var color = color_data;
+          var label = label_data;
+          var slices = color.length;
+          var sliceDeg = 360 / slices;
+          var deg = rand(0, 360);
+          var speed = 10;
+          var slowDownRand = 0;
+          var ctx = canvas.getContext('2d');
+          var width = canvas.width; // size
+          var center = width / 2; // center
+          ctx.clearRect(0, 0, width, width);
+          for (var i = 0; i < slices; i++) {
+            ctx.beginPath();
+            ctx.fillStyle = color[i];
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, width / 2, deg2rad(deg), deg2rad(deg + sliceDeg));
+            ctx.lineTo(center, center);
+            ctx.fill();
+            var drawText_deg = deg + sliceDeg / 2;
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.rotate(deg2rad(drawText_deg));
+            ctx.textAlign = center;
+            ctx.fillStyle = "#fff";
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillText(label[i], 100, 5);
+            ctx.restore();
+            deg += sliceDeg;
+          }
+        }
+        create_spinner();
+        var deg = rand(0, 360);
+        var speed = 10;
+        var ctx = canvas.getContext('2d');
+        var width = canvas.width; // size
+        var center = width / 2; // center
+        var isStopped = false;
+        var lock = false;
+        var slowDownRand = 0;
+        var element = document.getElementById("spin");
+        var element1 = document.getElementById("close");
+        var element2 = document.getElementById("wait");
+        var element3 = document.getElementById("rwd");
+         
+        function spin() {
+         
+          element.style.display = "none";
+          element1.style.display = "block";
+          
+          color_data = ['#fedf30', '#fdb441', '#fd6930', '#eb5454', '#bf9dd3', '#29b8cd', "#00f2a6", "#f67"];
+          label_data = ['Divyesh', 'Roshni', 'Rency', 'Reem', 'Earem', 'Feny', 'Greny', 'Ronil'];
+          var color = color_data;
+          var label = label_data;
+          var slices = color.length;
+          var sliceDeg = 360 / slices;
+          deg += speed;
+          deg %= 360;
+          // Increment speed
+          if (!isStopped && speed < 3) {
+            speed = speed + 1 * 0.1;
+          }
+          // Decrement Speed
+          if (isStopped) {
+            element1.style.display = "none";
+            element2.style.display = "block";
+            if (!lock) {
+              lock = true;
+              
+              slowDownRand = rand(0.994, 0.998);
+            }
+            speed = speed > 0.2 ? speed *= slowDownRand : 0;
+          }
+          // Stopped!
+          if (lock && !speed) {
+            var ai = Math.floor(((360 - deg - 0) % 360) / sliceDeg); // deg 2 Array Index
+            ai = (slices + ai) % slices; // Fix negative index
+            //return alert("You got:\n"+ label[ai] ); // Get Array Item from end Degree
+          let out=label[ai]
+          element2.style.display = "none";
+          element3.style.display = "block";
+            return Swal.fire({
+                  title: "Custom width, padding, color, background."+out,
+                  width: 600,
+                  padding: "3em",
+                  color: "#716add",
+                  background: "#fff url('trees.png')",
+                  backdrop: `
+                    rgba(0,0,123,0.4)
+                    url('cat.gif')
+                    left top
+                    no-repeat
+                  `
+                });
+
+                
+              
+
+
+               
+           
+          }
+          ctx.clearRect(0, 0, width, width);
+          for (var i = 0; i < slices; i++) {
+            ctx.beginPath();
+            ctx.fillStyle = color[i];
+            ctx.moveTo(center, center);
+            ctx.arc(center, center, width / 2, deg2rad(deg), deg2rad(deg + sliceDeg));
+            ctx.lineTo(center, center);
+            ctx.fill();
+            var drawText_deg = deg + sliceDeg / 2;
+            ctx.save();
+            ctx.translate(center, center);
+            ctx.rotate(deg2rad(drawText_deg));
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#fff";
+            ctx.font = 'bold 15px sans-serif';
+            ctx.fillText(label[i], 100, 5);
+            ctx.restore();
+            deg += sliceDeg;
+          }
+          window.requestAnimationFrame(spin);
+        }
+      
+        function stop() {
+          
+          isStopped = true;
+          
+        }
+     
+      
+        function deg2rad(deg) {
+          return deg * Math.PI / 180;
+        }
+      
+        function rand(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        const button = document.getElementById('rwd');
+
+function getRandomColor() {
+  // Generate random RGB values
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  
+  // Return the color in RGB format
+  return `rgb(${r},${g},${b})`;
+}
+
+function changeButtonColor() {
+  // Get a random color
+  const color = getRandomColor();
+  
+  // Apply the color to the button background
+  button.style.backgroundColor = color;
+}
+
+// Change color every 2 seconds (2000 milliseconds)
+setInterval(changeButtonColor, 800);
+      </script>
+  </body>
+</html>
